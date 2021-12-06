@@ -6,27 +6,31 @@ part 'todo_store.g.dart';
 class TodoStore = _TodoStoreBase with _$TodoStore;
 
 abstract class _TodoStoreBase with Store {
-  final ICreateTodo create;
-  final IUpdateTodo update;
-  final IDeleteTodo delete;
-  final IGetTodoList getTodo;
+  final ICreateTodo _create;
+  final IUpdateTodo _update;
+  final IDeleteTodo _delete;
+  final IGetTodoList _getTodo;
 
   @observable
-  TodoListModel todoList;
+  List<TodoModel> todoList;
 
   _TodoStoreBase({
-    required this.create,
-    required this.update,
-    required this.delete,
-    required this.getTodo,
-  }) : todoList = getTodo.todoListModel;
+    required ICreateTodo create,
+    required IUpdateTodo update,
+    required IDeleteTodo delete,
+    required IGetTodoList getTodo,
+  })  : _create = create,
+        _update = update,
+        _delete = delete,
+        _getTodo = getTodo,
+        todoList = getTodo.todoListModel.todos;
 
   @action
   Future<TodoModel> createTodo({
     required String label,
     String? description,
   }) async {
-    return await create(
+    return await _create(
       label: label,
       description: description,
     );
@@ -34,9 +38,9 @@ abstract class _TodoStoreBase with Store {
 
   @action
   Future<TodoModel> toggleStatus(int index) async {
-    var todo = getTodo.todoListModel.todos[index];
+    var todo = _getTodo.todoListModel.todos[index];
 
-    return await update(index, status: !todo.status);
+    return await _update(index, status: !todo.status);
   }
 
   @action
@@ -45,7 +49,7 @@ abstract class _TodoStoreBase with Store {
     String? label,
     String? description,
   }) async {
-    return await update(
+    return await _update(
       index,
       label: label,
       description: description,
@@ -54,6 +58,6 @@ abstract class _TodoStoreBase with Store {
 
   @action
   Future<void> deleteTodo(int index) async {
-    return await delete(index);
+    return await _delete(index);
   }
 }

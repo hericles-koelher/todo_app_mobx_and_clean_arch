@@ -12,13 +12,13 @@ mixin _$TodoStore on _TodoStoreBase, Store {
   final _$todoListAtom = Atom(name: '_TodoStoreBase.todoList');
 
   @override
-  TodoListModel get todoList {
+  List<TodoModel> get todoList {
     _$todoListAtom.reportRead();
     return super.todoList;
   }
 
   @override
-  set todoList(TodoListModel value) {
+  set todoList(List<TodoModel> value) {
     _$todoListAtom.reportWrite(value, super.todoList, () {
       super.todoList = value;
     });
