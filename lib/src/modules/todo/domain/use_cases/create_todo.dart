@@ -2,7 +2,7 @@ import 'package:uuid/uuid.dart';
 import '../domain.dart';
 
 abstract class ICreateTodo {
-  Future<TodoModel> call({
+  Future<void> call({
     required String label,
     String? description,
   });
@@ -16,7 +16,7 @@ class CreateTodoUseCase implements ICreateTodo {
   CreateTodoUseCase(this.repository);
 
   @override
-  Future<TodoModel> call({
+  Future<void> call({
     required String label,
     String? description,
   }) async =>

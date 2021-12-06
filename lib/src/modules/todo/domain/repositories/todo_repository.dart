@@ -3,14 +3,14 @@ import 'package:todo_app_mobx/src/modules/todo/domain/models/todo_model.dart';
 import '../domain.dart';
 
 abstract class ITodoRepository {
-  TodoListModel get getTodoListModel;
+  List<TodoModel> get getTodoList;
 
-  Future<TodoModel> createTodo({
+  Future<void> createTodo({
     required String label,
     String? description,
   });
 
-  Future<TodoModel> updateTodo(
+  Future<void> updateTodo(
     int todoIndex, {
     String? label,
     String? description,

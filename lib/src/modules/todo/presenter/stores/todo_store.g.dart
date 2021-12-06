@@ -9,42 +9,44 @@ part of 'todo_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$TodoStore on _TodoStoreBase, Store {
-  final _$todoListAtom = Atom(name: '_TodoStoreBase.todoList');
+  Computed<List<TodoModel>>? _$todoListComputed;
 
   @override
-  List<TodoModel> get todoList {
-    _$todoListAtom.reportRead();
-    return super.todoList;
+  List<TodoModel> get todoList =>
+      (_$todoListComputed ??= Computed<List<TodoModel>>(() => super.todoList,
+              name: '_TodoStoreBase.todoList'))
+          .value;
+
+  final _$_todoListAtom = Atom(name: '_TodoStoreBase._todoList');
+
+  @override
+  List<TodoModel> get _todoList {
+    _$_todoListAtom.reportRead();
+    return super._todoList;
   }
 
   @override
-  set todoList(List<TodoModel> value) {
-    _$todoListAtom.reportWrite(value, super.todoList, () {
-      super.todoList = value;
+  set _todoList(List<TodoModel> value) {
+    _$_todoListAtom.reportWrite(value, super._todoList, () {
+      super._todoList = value;
     });
   }
 
   final _$createTodoAsyncAction = AsyncAction('_TodoStoreBase.createTodo');
 
   @override
-  Future<TodoModel> createTodo({required String label, String? description}) {
+  Future<void> createTodo({required String label, String? description}) {
     return _$createTodoAsyncAction
         .run(() => super.createTodo(label: label, description: description));
   }
 
-  final _$toggleStatusAsyncAction = AsyncAction('_TodoStoreBase.toggleStatus');
+  final _$updateTodoAsyncAction = AsyncAction('_TodoStoreBase.updateTodo');
 
   @override
-  Future<TodoModel> toggleStatus(int index) {
-    return _$toggleStatusAsyncAction.run(() => super.toggleStatus(index));
-  }
-
-  final _$editTodoAsyncAction = AsyncAction('_TodoStoreBase.editTodo');
-
-  @override
-  Future<TodoModel> editTodo(int index, {String? label, String? description}) {
-    return _$editTodoAsyncAction.run(
-        () => super.editTodo(index, label: label, description: description));
+  Future<void> updateTodo(int index,
+      {String? label, String? description, bool? status}) {
+    return _$updateTodoAsyncAction.run(() => super.updateTodo(index,
+        label: label, description: description, status: status));
   }
 
   final _$deleteTodoAsyncAction = AsyncAction('_TodoStoreBase.deleteTodo');

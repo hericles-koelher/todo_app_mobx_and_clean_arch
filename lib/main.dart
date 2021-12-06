@@ -7,8 +7,10 @@ import 'package:todo_app_mobx/todo_app_mobx.dart';
 void main() async {
   await Hive.initFlutter();
 
-  Hive.registerAdapter(HiveTodoAdapterAdapter());
-  Hive.registerAdapter(HiveTodoListAdapterAdapter());
+  Hive.registerAdapter<HiveTodoObject>(
+    HiveTodoObjectAdapter(),
+    override: true,
+  );
 
   runApp(
     const TodoAppMobx(),

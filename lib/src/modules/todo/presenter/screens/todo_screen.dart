@@ -35,9 +35,14 @@ class TodoScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           children: store.todoList
               .map(
-                (e) => TodoTile(
-                  todo: e,
-                  onCheckboxChanged: (bool? newValue) {},
+                (todo) => TodoTile(
+                  todo: todo,
+                  onCheckboxChanged: (bool? newValue) {
+                    store.updateTodo(
+                      store.todoList.indexOf(todo),
+                      status: newValue,
+                    );
+                  },
                 ),
               )
               .toList(),
@@ -46,16 +51,25 @@ class TodoScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-              child: Column(
-                // Create todo form
-                children: [],
-              ),
-            ),
+          store.createTodo(label: "Test Todo ${store.todoList.length}");
+
+          store.createTodo(label: "Test Todo ${store.todoList.length}");
+
+          store.createTodo(
+            label: "Test Todo with Description ${store.todoList.length}",
+            description:
+                "Test description which lentgh should be more than screen can render!",
           );
+          // showModalBottomSheet(
+          //   context: context,
+          //   builder: (context) => Padding(
+          //     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          //     child: Column(
+          //       // Create todo form
+          //       children: [],
+          //     ),
+          //   ),
+          // );
         },
       ),
     );

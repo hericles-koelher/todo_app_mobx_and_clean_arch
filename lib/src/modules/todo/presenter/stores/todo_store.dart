@@ -12,7 +12,10 @@ abstract class _TodoStoreBase with Store {
   final IGetTodoList _getTodo;
 
   @observable
-  List<TodoModel> todoList;
+  List<TodoModel> _todoList;
+
+  @computed
+  List<TodoModel> get todoList => _todoList;
 
   _TodoStoreBase({
     required ICreateTodo create,
@@ -23,41 +26,42 @@ abstract class _TodoStoreBase with Store {
         _update = update,
         _delete = delete,
         _getTodo = getTodo,
-        todoList = getTodo.todoListModel.todos;
+        _todoList = getTodo.todoList;
 
   @action
-  Future<TodoModel> createTodo({
+  Future<void> createTodo({
     required String label,
     String? description,
   }) async {
-    return await _create(
+    await _create(
       label: label,
       description: description,
     );
+
+    _todoList = _getTodo.todoList;
   }
 
   @action
-  Future<TodoModel> toggleStatus(int index) async {
-    var todo = _getTodo.todoListModel.todos[index];
-
-    return await _update(index, status: !todo.status);
-  }
-
-  @action
-  Future<TodoModel> editTodo(
+  Future<void> updateTodo(
     int index, {
     String? label,
     String? description,
+    bool? status,
   }) async {
-    return await _update(
+    await _update(
       index,
       label: label,
       description: description,
+      status: status,
     );
+
+    _todoList = _getTodo.todoList;
   }
 
   @action
   Future<void> deleteTodo(int index) async {
-    return await _delete(index);
+    await _delete(index);
+
+    _todoList = _getTodo.todoList;
   }
 }

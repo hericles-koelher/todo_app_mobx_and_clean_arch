@@ -17,7 +17,7 @@ class TodoTile extends StatelessWidget {
       elevation: 2,
       clipBehavior: Clip.hardEdge,
       child: ListTile(
-        isThreeLine: true,
+        // isThreeLine: todo.description != null,
         title: Text(todo.label),
         subtitle: todo.description != null
             ? Text(

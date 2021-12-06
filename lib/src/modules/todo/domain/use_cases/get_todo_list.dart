@@ -1,7 +1,7 @@
 import 'package:todo_app_mobx/src/modules/todo/domain/domain.dart';
 
 abstract class IGetTodoList {
-  TodoListModel get todoListModel;
+  List<TodoModel> get todoList;
 }
 
 class GetTodoListUseCase implements IGetTodoList {
@@ -10,5 +10,5 @@ class GetTodoListUseCase implements IGetTodoList {
   GetTodoListUseCase(this.repository);
 
   @override
-  TodoListModel get todoListModel => repository.getTodoListModel;
+  List<TodoModel> get todoList => repository.getTodoList;
 }

@@ -8,58 +8,36 @@ class TodoRepository implements ITodoRepository {
   final ITodoDatasource _datasource;
 
   @override
-  TodoListModel get getTodoListModel => _datasource.getTodoListModel;
+  List<TodoModel> get getTodoList => _datasource.getTodoList;
 
   TodoRepository(this._datasource);
 
   @override
-  Future<TodoModel> createTodo(
-      {required String label, String? description}) async {
+  Future<void> createTodo({required String label, String? description}) async {
     var todo = TodoModel(
       id: idGenerator.v1(),
       label: label,
       description: description,
     );
 
-    var todoListModel = getTodoListModel;
-
-    todoListModel.todos.add(todo);
-
-    await _datasource.updateTodoListModel(todoListModel);
-
-    return todo;
+    await _datasource.addTodo(todo);
   }
 
   @override
-  Future<void> deleteTodo(int index) async {
-    var todoListModel = getTodoListModel;
-
-    todoListModel.todos.removeAt(index);
-
-    await _datasource.updateTodoListModel(todoListModel);
-  }
+  Future<void> deleteTodo(int index) async =>
+      await _datasource.deleteTodo(index);
 
   @override
-  Future<TodoModel> updateTodo(
-    int todoIndex, {
+  Future<void> updateTodo(
+    int index, {
     String? label,
     String? description,
     bool? status,
-  }) async {
-    var todoListModel = getTodoListModel;
-
-    var updatedTodo = todoListModel.todos[todoIndex].copyWith(
-      label: label,
-      description: description,
-      status: status,
-    );
-
-    todoListModel.todos.removeAt(todoIndex);
-
-    todoListModel.todos.insert(todoIndex, updatedTodo);
-
-    await _datasource.updateTodoListModel(todoListModel);
-
-    return updatedTodo;
-  }
+  }) async =>
+      await _datasource.updateTodo(
+        index,
+        label: label,
+        description: description,
+        status: status,
+      );
 }

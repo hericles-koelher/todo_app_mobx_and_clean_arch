@@ -1,7 +1,7 @@
 import '../domain.dart';
 
 abstract class IUpdateTodo {
-  Future<TodoModel> call(
+  Future<void> call(
     int todoIndex, {
     String? label,
     String? description,
@@ -15,7 +15,7 @@ class UpdateTodoUseCase implements IUpdateTodo {
   UpdateTodoUseCase(this.repository);
 
   @override
-  Future<TodoModel> call(
+  Future<void> call(
     int todoIndex, {
     String? label,
     String? description,

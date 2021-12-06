@@ -1,9 +1,14 @@
 import 'package:todo_app_mobx/src/modules/todo/domain/domain.dart';
 
 abstract class ITodoDatasource {
-  TodoListModel get getTodoListModel;
+  List<TodoModel> get getTodoList;
 
-  Future<void> updateTodoListModel(TodoListModel todoListModel);
+  Future<void> addTodo(TodoModel todo);
+
+  Future<void> updateTodo(int index,
+      {String? label, String? description, bool? status});
+
+  Future<void> deleteTodo(int index);
 
   Future<void> close();
 }
