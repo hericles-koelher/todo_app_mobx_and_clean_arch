@@ -26,50 +26,111 @@ class TodoScreen extends StatelessWidget {
       getTodo: getTodoList,
     );
 
+    final textTheme = Theme.of(context).textTheme;
+
+    const double titleVerticalPadding = 15;
+    const double titleHorizontalPadding = 20;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("TODO - Mobx"),
       ),
-      body: Observer(
-        builder: (context) => ListView(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          children: store.todoList
-              .map(
-                (todo) => TodoTile(
-                  todo: todo,
-                  onCheckboxChanged: (bool? newValue) {
-                    store.updateTodo(
-                      store.todoList.indexOf(todo),
-                      status: newValue,
-                    );
-                  },
+      body: Observer(builder: (_) {
+        var todoList = store.todoList.where((todo) => !todo.status).toList();
+        var doneList = store.todoList.where((todo) => todo.status).toList();
+
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: titleVerticalPadding,
+                  horizontal: titleHorizontalPadding,
                 ),
-              )
-              .toList(),
-        ),
-      ),
+                child: Text(
+                  "To Do",
+                  style: textTheme.headline6,
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (_, index) {
+                  int indexInOriginalList =
+                      store.todoList.indexOf(todoList[index]);
+
+                  return TodoTile(
+                    todo: todoList[index],
+                    onCheckboxChanged: (bool? newValue) {
+                      store.updateTodo(
+                        indexInOriginalList,
+                        status: newValue,
+                      );
+                    },
+                    onDismissed: () {
+                      store.deleteTodo(indexInOriginalList);
+                    },
+                  );
+                },
+                childCount: todoList.length,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: titleVerticalPadding,
+                  horizontal: titleHorizontalPadding,
+                ),
+                child: Text(
+                  "Done",
+                  style: textTheme.headline6,
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (_, index) {
+                  int indexInOriginalList =
+                      store.todoList.indexOf(doneList[index]);
+
+                  return TodoTile(
+                    todo: doneList[index],
+                    onCheckboxChanged: (bool? newValue) {
+                      store.updateTodo(
+                        indexInOriginalList,
+                        status: newValue,
+                      );
+                    },
+                    onDismissed: () {
+                      store.deleteTodo(indexInOriginalList);
+                    },
+                  );
+                },
+                childCount: doneList.length,
+              ),
+            ),
+          ],
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          store.createTodo(label: "Test Todo ${store.todoList.length}");
+        onPressed: () async {
+          const double borderRadius = 25;
 
-          store.createTodo(label: "Test Todo ${store.todoList.length}");
-
-          store.createTodo(
-            label: "Test Todo with Description ${store.todoList.length}",
-            description:
-                "Test description which lentgh should be more than screen can render!",
+          showModalBottomSheet(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(borderRadius),
+                topRight: Radius.circular(borderRadius),
+              ),
+            ),
+            context: context,
+            builder: (context) => TodoForm(
+              done: ({required String label, String? description}) async {
+                await store.createTodo(label: label, description: description);
+              },
+            ),
           );
-          // showModalBottomSheet(
-          //   context: context,
-          //   builder: (context) => Padding(
-          //     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-          //     child: Column(
-          //       // Create todo form
-          //       children: [],
-          //     ),
-          //   ),
-          // );
         },
       ),
     );
