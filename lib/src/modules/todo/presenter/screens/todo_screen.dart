@@ -31,7 +31,7 @@ class TodoScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("TODO - Mobx"),
+        title: const Text("TodoX"),
       ),
       body: Observer(builder: (_) {
         var todoList = store.todoList.where((todo) => !todo.status).toList();

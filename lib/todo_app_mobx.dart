@@ -37,6 +37,7 @@ class _TodoAppMobxState extends State<TodoAppMobx> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "TodoX",
       debugShowCheckedModeBanner: false,
       home: ready
           ? Provider<ITodoDatasource>.value(
