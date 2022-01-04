@@ -44,14 +44,13 @@ TodoX - is just an little project made with the purpose of study mobile developm
 - **[Flutter](https://flutter.dev/)**
 - **[Mobx](https://pub.dev/packages/mobx)**
 - **[Hive](https://pub.dev/packages/hive)**
+- **[Clean Architecture](https://github.com/Flutterando/Clean-Dart)**
 
 ---
 
 ## Application
 
 Below are some screens images of the app.
-
-### App Screens
 
 <p align="center">
   <img alt="Todo Home Screen" title="#TodoHomeScreen" src="./images/todo.png" width="200px">
