@@ -1,17 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:todo_app_mobx/src/modules/todo/domain/models/todo_model.dart';
+import 'package:todo_app_mobx/src/modules/todo/todo.dart';
 
 class TodoTile extends StatelessWidget {
   final TodoModel todo;
-  final void Function(bool?) onCheckboxChanged;
-  final void Function() onDismissed;
+  final FutureOr<void> Function({required String label, String? description})?
+      onEdit;
+  final void Function(bool?)? onCheckboxChanged;
+  final void Function()? onDismissed;
 
   const TodoTile({
     Key? key,
     required this.todo,
-    required this.onCheckboxChanged,
-    required this.onDismissed,
+    this.onEdit,
+    this.onCheckboxChanged,
+    this.onDismissed,
   }) : super(key: key);
 
   @override
@@ -20,16 +25,26 @@ class TodoTile extends StatelessWidget {
       key: UniqueKey(),
       startActionPane: ActionPane(
         motion: const StretchMotion(),
-        dismissible: DismissiblePane(onDismissed: onDismissed),
+        dismissible: onDismissed != null
+            ? DismissiblePane(onDismissed: onDismissed!)
+            : null,
         children: [
-          SlidableAction(
-            onPressed: (_) => onDismissed(),
-            // Hardcoded test colors.
-            backgroundColor: Color(0xFFFE4A49),
-            foregroundColor: Colors.white,
-            icon: Icons.delete,
-            label: 'Delete',
-          ),
+          if (onDismissed != null)
+            SlidableAction(
+              onPressed: (_) => onDismissed!(),
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
+            ),
+          if (onEdit != null)
+            SlidableAction(
+              onPressed: (context) => showEditModal(context),
+              backgroundColor: Colors.lime,
+              foregroundColor: Colors.white,
+              icon: Icons.edit,
+              label: 'Edit',
+            ),
         ],
       ),
       child: Card(
@@ -60,6 +75,27 @@ class TodoTile extends StatelessWidget {
             onChanged: onCheckboxChanged,
           ),
         ),
+      ),
+    );
+  }
+
+  void showEditModal(BuildContext context) {
+    const double borderRadius = 25;
+
+    showModalBottomSheet(
+      context: context,
+      clipBehavior: Clip.hardEdge,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(borderRadius),
+          topRight: Radius.circular(borderRadius),
+        ),
+      ),
+      builder: (_) => TodoForm.edit(
+        originalLabel: todo.label,
+        originalDescription: todo.description,
+        save: onEdit!,
       ),
     );
   }

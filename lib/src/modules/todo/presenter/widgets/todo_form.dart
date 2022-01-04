@@ -1,16 +1,51 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class TodoForm extends StatefulWidget {
   final String? label;
   final String? description;
-  final void Function({required String label, String? description}) done;
+  final FutureOr<void> Function({
+    required String label,
+    String? description,
+  }) save;
+  final String confirmLabel;
 
-  const TodoForm({
+  const TodoForm._({
     Key? key,
     this.label,
     this.description,
-    required this.done,
+    required this.save,
+    required this.confirmLabel,
   }) : super(key: key);
+
+  factory TodoForm.create(
+      {required FutureOr<void> Function({
+        required String label,
+        String? description,
+      })
+          save}) {
+    return TodoForm._(
+      save: save,
+      confirmLabel: "Create",
+    );
+  }
+
+  factory TodoForm.edit(
+      {required String originalLabel,
+      String? originalDescription,
+      required FutureOr<void> Function({
+        required String label,
+        String? description,
+      })
+          save}) {
+    return TodoForm._(
+      label: originalLabel,
+      description: originalDescription,
+      save: save,
+      confirmLabel: "Edit",
+    );
+  }
 
   @override
   _TodoFormState createState() => _TodoFormState();
@@ -40,10 +75,11 @@ class _TodoFormState extends State<TodoForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Form(
         key: _formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
               controller: _labelController,
@@ -63,7 +99,7 @@ class _TodoFormState extends State<TodoForm> {
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: "Description"),
             ),
-            const Spacer(),
+            const SizedBox(height: 35),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -74,9 +110,9 @@ class _TodoFormState extends State<TodoForm> {
                   child: const Text("Cancel"),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      widget.done(
+                      await widget.save(
                         label: _labelController.text,
                         description: _descriptionController.text,
                       );
@@ -84,9 +120,14 @@ class _TodoFormState extends State<TodoForm> {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text("Create"),
+                  child: Text(widget.confirmLabel),
                 ),
               ],
+            ),
+            // Odeio essa gambiarra pra jogar os itens do modal pra cima
+            // quando o teclado aparece.
+            SizedBox(
+              height: MediaQuery.of(context).viewInsets.bottom,
             ),
           ],
         ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app_mobx/src/modules/todo/domain/domain.dart';
 import 'package:todo_app_mobx/src/modules/todo/todo.dart';
 
 class TodoScreen extends StatelessWidget {
@@ -61,6 +59,14 @@ class TodoScreen extends StatelessWidget {
 
                   return TodoTile(
                     todo: todoList[index],
+                    onEdit: (
+                        {required String label, String? description}) async {
+                      await store.updateTodo(
+                        indexInOriginalList,
+                        label: label,
+                        description: description,
+                      );
+                    },
                     onCheckboxChanged: (bool? newValue) {
                       store.updateTodo(
                         indexInOriginalList,
@@ -118,16 +124,21 @@ class TodoScreen extends StatelessWidget {
           const double borderRadius = 25;
 
           showModalBottomSheet(
+            context: context,
+            clipBehavior: Clip.hardEdge,
+            isScrollControlled: true,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(borderRadius),
                 topRight: Radius.circular(borderRadius),
               ),
             ),
-            context: context,
-            builder: (context) => TodoForm(
-              done: ({required String label, String? description}) async {
-                await store.createTodo(label: label, description: description);
+            builder: (context) => TodoForm.create(
+              save: ({required String label, String? description}) async {
+                await store.createTodo(
+                  label: label,
+                  description: description,
+                );
               },
             ),
           );
